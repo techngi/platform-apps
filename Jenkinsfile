@@ -4,7 +4,7 @@ pipeline {
   environment {
     AWS_REGION   = "ap-southeast-2"
     AWS_ACCOUNT  = "421869852482"
-    ECR_REPO     = "week3-app"
+    ECR_REPO     = "devops-app"
     ECR_REGISTRY = "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
     GITOPS_REPO  = "techngi/platform-environments"
