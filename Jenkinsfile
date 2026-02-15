@@ -34,17 +34,22 @@ pipeline {
       }
     }
 
-    stage("Push Image to ECR") {
-      steps {
-        sh """
-          set -euxo pipefail
-          aws ecr get-login-password --region ${AWS_REGION} | \
-            docker login --username AWS --password-stdin ${ECR_REGISTRY}
+stage("Push Image to ECR") {
+  steps {
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+      sh """
+        set -euxo pipefail
 
-          docker push ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
-        """
-      }
+        aws sts get-caller-identity
+
+        aws ecr get-login-password --region ${AWS_REGION} | \
+          docker login --username AWS --password-stdin ${ECR_REGISTRY}
+
+        docker push ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
+      """
     }
+  }
+}
 
     stage("Update GitOps Repo (CD Trigger)") {
       steps {
