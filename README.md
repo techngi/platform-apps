@@ -32,6 +32,18 @@ if __name__ == "__main__":
 Flask==3.0.2
 ```
 
+- Dockerfile
+
+```bash
+docker build -t app:test .
+docker ps -a
+docker run -d -p 5000:5000 app:test
+curl http://localhost:5000/health
+ 
+docker stop {container-id}
+docker ps -a
+```
+
 ```bash
 FROM python:3.10-slim
 
