@@ -15,10 +15,12 @@ pipeline {
   stages {
 
     stage("Checkout CI repo") {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
-    stage('Build Docker Image') {
+    stage("Build Docker Image") {
       steps {
         script {
           env.IMAGE_TAG = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
@@ -32,7 +34,7 @@ pipeline {
       }
     }
 
-    stage('Push Image to ECR') {
+    stage("Push Image to ECR") {
       steps {
         sh """
           set -euxo pipefail
@@ -44,25 +46,28 @@ pipeline {
       }
     }
 
-stage('Update GitOps Repo (CD Trigger)') {
-  steps {
-    withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
-      sh """
-        set -euxo pipefail
-        rm -rf ${GITOPS_DIR}
-        git clone https://${GITHUB_TOKEN}@github.com/${GITOPS_REPO}.git ${GITOPS_DIR}
-        cd ${GITOPS_DIR}
+    stage("Update GitOps Repo (CD Trigger)") {
+      steps {
+        withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
+          sh """
+            set -euxo pipefail
+            rm -rf ${GITOPS_DIR}
+            git clone https://${GITHUB_TOKEN}@github.com/${GITOPS_REPO}.git ${GITOPS_DIR}
+            cd ${GITOPS_DIR}
 
-        # Update the tag in the file ArgoCD uses
-        sed -i -E 's/^( *tag:).*/\\1 "'"${IMAGE_TAG}"'"/' ${VALUES_FILE}
+            # Update the tag in the file ArgoCD uses
+            sed -i -E 's/^( *tag:).*/\\1 "'"${IMAGE_TAG}"'"/' ${VALUES_FILE}
 
-        git config user.email "jenkins@local"
-        git config user.name "jenkins"
+            git config user.email "jenkins@local"
+            git config user.name "jenkins"
 
-        git add ${VALUES_FILE}
-        git diff --cached --quiet || git commit -m "Update image tag to ${IMAGE_TAG}"
-        git push origin master
-      """
+            git add ${VALUES_FILE}
+            git diff --cached --quiet || git commit -m "Update image tag to ${IMAGE_TAG}"
+            git push origin master
+          """
+        }
+      }
     }
-  }
-}
+
+  } // end stages
+}   // end pipeline
