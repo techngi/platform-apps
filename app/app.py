@@ -9,7 +9,7 @@ def health():
 
 @app.get("/")
 def root():
-    return "week3-app is running\n"
+    return "Welcome to the world of DevOps\n"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

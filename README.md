@@ -1,6 +1,6 @@
 # Repository Structure
 
-week3-app-ci/
+platforms-app-ci/
 ├── Dockerfile
 └── app/
     ├── app.py
