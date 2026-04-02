@@ -10,17 +10,18 @@ This project implements application-level monitoring for the DevOps platform usi
 
 The goal is to provide observability into application health, performance, and reliability.
 
-# Architecture
+## Architecture
++--------------------------+
+|     Application (Flask)              |
+|           ↓                          |   
+|    /metrics endpoint                 |
+|           ↓                          |   
+|   ServiceMonitor (Kubernetes)        |
+|           ↓                          | 
+|  Prometheus (scrapes metrics)        |
+|           ↓                          |
+| Grafana (dashboards & visualization) |
 
-Application (Flask)
-        ↓
-/metrics endpoint
-        ↓
-ServiceMonitor (Kubernetes)
-        ↓
-Prometheus (scrapes metrics)
-        ↓
-Grafana (dashboards & visualization)
 ⚙️ Components
 1. Application (platform-app)
 Built using Flask
