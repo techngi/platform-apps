@@ -1,16 +1,17 @@
-Application Monitoring with Prometheus & Grafana
-📌 Overview
+### Application Monitoring with Prometheus & Grafana
+
+## Overview
 
 This project implements application-level monitoring for the DevOps platform using:
-
-Prometheus → metrics collection
-Grafana → visualization
-Kubernetes (EKS) → workload orchestration
-Flask application → exposes /metrics endpoint
+* Prometheus → metrics collection
+* Grafana → visualization
+* Kubernetes (EKS) → workload orchestration
+* Flask application → exposes /metrics endpoint
 
 The goal is to provide observability into application health, performance, and reliability.
 
-🏗️ Architecture
+# Architecture
+
 Application (Flask)
         ↓
 /metrics endpoint
