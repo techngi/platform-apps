@@ -40,9 +40,38 @@ Grafana (dashboards & visualization)
   - `/health` → health check  
   - `/metrics` → Prometheus metrics  
 
-Example metric:
-http_requests_total
+# Update application to expose matrix
 
+```bash
+from flask import Flask, jsonify, Response
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+import os
+
+app = Flask(__name__)
+
+REQUESTS = Counter('http_requests_total', 'Total HTTP Requests')
+
+@app.get("/health")
+def health():
+    return jsonify(app="DevOps-app", status="ok", version=os.getenv("APP_VERSION", "dev"))
+
+@app.get("/")
+def root():
+    REQUESTS.inc()
+    return "Welcome to the world of DevOps - Stage2:)\n"
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+```
+
+This exposes:
+
+/ for your app
+/metrics for Prometheus
 
 ---
 
@@ -76,31 +105,20 @@ kind: ServiceMonitor
 metadata:
   name: platform-app
   namespace: monitoring
+  labels:
+    release: monitoring
 spec:
-  selector:
-    matchLabels:
-      app: platform-app
   namespaceSelector:
     matchNames:
       - dev
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: platform-app
   endpoints:
     - port: http
       path: /metrics
       interval: 15s
 ```
-### Deployment Workflow
-
-CI Pipeline (platform-app repo)
-1. Code pushed to GitHub
-2. Jenkins pipeline triggered
-3. Docker image built
-4. Image pushed to ECR
-
-### CD / GitOps (platform-environments repo)
-1. Image tag updated
-2. Argo CD syncs changes
-3. Kubernetes deployment updated
-4. New pods start with updated image
 
 ### Verification Steps
 Check application pods
@@ -122,13 +140,13 @@ curl http://127.0.0.1:8080/metrics
 
 Verify Prometheus target
 ```bash
-kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090 -n monitoring
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090 -n monitoring --address 0.0.0.0
 ```
 
 Open:
 
 ```bash
-http://localhost:9090/targets
+http://192.168.56.10:9090/targets
 ```
 
 Application target should be UP
@@ -141,5 +159,5 @@ kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring
 Open:
 
 ```bash
-http://localhost:3000
+http://192.168.56.10:3000
 ```
