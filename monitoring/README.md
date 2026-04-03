@@ -154,7 +154,7 @@ Application target should be UP
 
 Verify Grafana
 ```bash
-kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring
+kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring --address 0.0.0.0
 ```
 
 Open:
