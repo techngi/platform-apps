@@ -183,9 +183,9 @@ container_memory_working_set_bytes{namespace="dev", pod=~"platform-app.*"}
 
 kube_pod_container_status_restarts_total{namespace="dev", pod=~"platform-app.*"}
 
-kube_deployment_status_replicas_available{namespace="dev", deployment="my-app"}
+kube_deployment_status_replicas_available{namespace="dev", deployment="platform-app"}
 
-kube_deployment_spec_replicas{namespace="dev", deployment="my-app"}
+kube_deployment_spec_replicas{namespace="dev", deployment="platform-app"}
 ```
 
 
@@ -195,25 +195,25 @@ kube_deployment_spec_replicas{namespace="dev", deployment="my-app"}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: my-app-alerts
+  name: platform-app-alerts
   namespace: monitoring
   labels:
     release: monitoring
 spec:
   groups:
-    - name: my-app.rules
+    - name: platform-app.rules
       rules:
         - alert: MyAppTargetDown
-          expr: up{job="my-app"} == 0
+          expr: up{job="platform-app"} == 0
           for: 2m
           labels:
             severity: warning
           annotations:
-            summary: "My app target is down"
-            description: "Prometheus cannot scrape my app for 2 minutes"
+            summary: "Platform app target is down"
+            description: "Prometheus cannot scrape Platform app for 2 minutes"
 
         - alert: MyAppHighRestartCount
-          expr: increase(kube_pod_container_status_restarts_total{namespace="dev", pod=~"my-app.*"}[10m]) > 1
+          expr: increase(kube_pod_container_status_restarts_total{namespace="dev", pod=~"platform-app.*"}[10m]) > 1
           for: 5m
           labels:
             severity: warning
@@ -222,7 +222,7 @@ spec:
             description: "Pod restart count increased in last 10 minutes"
 
         - alert: MyAppReplicasUnavailable
-          expr: kube_deployment_status_replicas_available{namespace="dev", deployment="my-app"} < kube_deployment_spec_replicas{namespace="dev", deployment="my-app"}
+          expr: kube_deployment_status_replicas_available{namespace="dev", deployment="platform-app"} < kube_deployment_spec_replicas{namespace="dev", deployment="platform-app"}
           for: 3m
           labels:
             severity: critical
