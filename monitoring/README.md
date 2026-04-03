@@ -1,4 +1,4 @@
-# DevOps Platform – Application Monitoring (Prometheus & Grafana)
+# Application Monitoring (Prometheus & Grafana)
 
 ## Overview
 
