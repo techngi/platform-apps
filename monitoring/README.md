@@ -71,6 +71,7 @@ if __name__ == "__main__":
 This exposes:
 
 / for your app
+
 /metrics for Prometheus
 
 ---
