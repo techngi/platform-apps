@@ -187,3 +187,50 @@ kube_deployment_status_replicas_available{namespace="dev", deployment="my-app"}
 
 kube_deployment_spec_replicas{namespace="dev", deployment="my-app"}
 ```
+
+
+# Promethus alerts
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: my-app-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: my-app.rules
+      rules:
+        - alert: MyAppTargetDown
+          expr: up{job="my-app"} == 0
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "My app target is down"
+            description: "Prometheus cannot scrape my app for 2 minutes"
+
+        - alert: MyAppHighRestartCount
+          expr: increase(kube_pod_container_status_restarts_total{namespace="dev", pod=~"my-app.*"}[10m]) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "My app pod restarting frequently"
+            description: "Pod restart count increased in last 10 minutes"
+
+        - alert: MyAppReplicasUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="dev", deployment="my-app"} < kube_deployment_spec_replicas{namespace="dev", deployment="my-app"}
+          for: 3m
+          labels:
+            severity: critical
+          annotations:
+            summary: "My app replicas unavailable"
+            description: "Available replicas are below desired count"
+```
+
+ - Verify alert rules in Prometheus
+
+Go to Alerts page in Prometheus.
