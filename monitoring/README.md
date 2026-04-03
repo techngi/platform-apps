@@ -162,3 +162,28 @@ Open:
 ```bash
 http://192.168.56.10:3000
 ```
+
+# Build Grafana dashboards and alerts
+
+Add panels for:
+
+- request count/rate
+- error count
+- response latency if available
+- CPU usage
+- memory usage
+- pod restarts
+
+PromQL examples:
+
+```promql
+rate(container_cpu_usage_seconds_total{namespace="dev", pod=~"platform-app.*"}[5m])
+
+container_memory_working_set_bytes{namespace="dev", pod=~"platform-app.*"}
+
+kube_pod_container_status_restarts_total{namespace="dev", pod=~"platform-app.*"}
+
+kube_deployment_status_replicas_available{namespace="dev", deployment="my-app"}
+
+kube_deployment_spec_replicas{namespace="dev", deployment="my-app"}
+```
