@@ -234,3 +234,9 @@ spec:
  - Verify alert rules in Prometheus
 
 Go to Alerts page in Prometheus.
+
+Open
+
+```bash
+http://192.168.56.10:9090/alerts
+```
