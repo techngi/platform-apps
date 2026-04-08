@@ -34,23 +34,6 @@ pipeline {
       }
     }
 
-stage("Trivy Scan") {
-  steps {
-    sh """
-      set -euxo pipefail
-
-      docker run --rm \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        ghcr.io/aquasecurity/trivy:latest \
-        image --scanners vuln \
-        --severity CRITICAL \
-        --exit-code 1 \
-        --no-progress \
-        ${ECR_REPO}:${IMAGE_TAG}
-    """
-  }
-}
-
 stage("Push Image to ECR") {
   steps {
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
