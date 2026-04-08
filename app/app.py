@@ -6,15 +6,10 @@ app = Flask(__name__)
 
 REQUESTS = Counter('http_requests_total', 'Total HTTP Requests')
 
-@app.route("/health")
+@app.get("/health")
 def health():
-    return jsonify(
-        app="DevOps-app",
-        status="ok",
-        version=os.getenv("APP_VERSION", "dev"),
-        environment=os.getenv("APP_ENV", "dev"),
-        log_level=os.getenv("LOG_LEVEL", "info")
-    )
+    return jsonify(app="DevOps-app", status="ok", version=os.getenv("APP_VERSION", "dev"))
+
 @app.get("/")
 def root():
     REQUESTS.inc()
