@@ -18,7 +18,7 @@ def health():
 @app.get("/")
 def root():
     REQUESTS.inc()
-    return "Welcome to the world of DevOps - StageFull:)\n"
+    return "Welcome to the world of DevOps - StageFuller:)\n"
 
 @app.get("/metrics")
 def metrics():

@@ -82,10 +82,22 @@ pipeline {
       }
     }
 
+stage('Debug Branch') {
+  steps {
+    sh '''
+      echo "BRANCH_NAME=${BRANCH_NAME}"
+      echo "GIT_BRANCH=${GIT_BRANCH}"
+    '''
+  }
+}
+
     stage('Approve Production Deployment') {
-      when {
-        branch 'master'
-      }
+	when {
+	  expression {
+            return env.GIT_BRANCH == 'origin/master' || env.BRANCH_NAME == 'master'
+         }
+        }
+
       steps {
         timeout(time: 10, unit: 'MINUTES') {
           input message: "Deploy to PRODUCTION?", ok: "Deploy"
@@ -95,8 +107,10 @@ pipeline {
 
     stage('Promote to Production') {
       when {
-        branch 'master'
-      }
+        expression {
+          return env.GIT_BRANCH == 'origin/master' || env.BRANCH_NAME == 'master'
+         }  
+       }
       steps {
         withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
           sh '''
