@@ -119,6 +119,4 @@ Benefits:
 
 ---
 
-## 👤 Author
 
-Built as part of DevOps learning and transition to Platform Engineering.
