@@ -109,14 +109,3 @@ Benefits:
 * Production promotion workflow
 
 ---
-
-## 📌 Future Improvements
-
-* Slack notifications for approvals
-* Unit/integration test stage
-* Image signing (Cosign)
-* SAST/DAST integration
-
----
-
-
